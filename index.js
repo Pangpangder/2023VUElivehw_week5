@@ -40,7 +40,8 @@ const app=createApp({
           },
           message: '',
         },
-        isLoading:true
+        isLoading:true,
+        cartStatus:false
     }
   },
   components:{
@@ -100,6 +101,7 @@ const app=createApp({
       axios.get(url)
       .then((res)=>{
         this.carts=res.data.data;
+        this.haveItem();
       })
       .catch((err)=>{
         console.dir(err);
@@ -154,25 +156,38 @@ const app=createApp({
      });
     },
     sendMyOrder(){
-     const url=`${apiUrl}/api/${apiPath}/order`;
-     const obj={
-      data:this.form
-     }
-     axios.post(url,obj)
-     .then((res)=>{
-       alert(res.data.message);
-       this.$refs.form.resetForm();
-       this.form.message='';
-       this.getCartList();
-     })
-     .catch((err)=>{
-      console.dir(err);
-      alert('出錯啦!!');
-     });
+     if(this.carts.carts.length===0){
+        alert('您的購物車是空的呦！');
+        return;
+     }else{
+      const url=`${apiUrl}/api/${apiPath}/order`;
+      const obj={
+       data:this.form
+      }
+      axios.post(url,obj)
+      .then((res)=>{
+        alert(res.data.message);
+        this.$refs.form.resetForm();
+        this.form.message='';
+        this.getCartList();
+        console.log(this.carts.cart);
+      })
+      .catch((err)=>{
+       console.dir(err);
+       alert('出錯啦!!');
+      });
+     };
     },
     isPhone(value) {
       const phoneNumber = /^(09)[0-9]{8}$/;
       return phoneNumber.test(value) ? true : '需要正確的電話號碼';
+    },
+    haveItem(){
+      if(this.carts.carts.length===0){
+        this.cartStatus=false;
+      }else{
+        this.cartStatus=true;
+      }
     }
   },
   mounted(){
