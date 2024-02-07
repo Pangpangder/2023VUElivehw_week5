@@ -30,6 +30,7 @@ export default{
     addToCart(productId,qty){
         this.$emit('addToCart',productId,qty);
         this.hideModal();
+        this.qty=1;
     }
    }
 };
